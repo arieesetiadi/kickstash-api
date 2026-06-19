@@ -3,9 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nestjs_api
+    container_name: hirepath_api
     ports:
-      - "3000:3000"
+      - "4000:4000"
     env_file:
       - .env
     environment:
@@ -26,7 +26,7 @@ services:
 
   postgres:
     image: postgres:16-alpine
-    container_name: nestjs_postgres
+    container_name: hirepath_postgres
     ports:
       - "5432:5432"
     env_file:
@@ -46,7 +46,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: nestjs_redis
+    container_name: hirepath_redis
     ports:
       - "6379:6379"
     volumes:

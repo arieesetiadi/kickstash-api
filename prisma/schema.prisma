@@ -5,7 +5,7 @@
 
 generator client {
     provider     = "prisma-client"
-    output       = "./generated/prisma"
+    output       = "../src/generated/prisma"
     moduleFormat = "cjs"
 }
 
@@ -13,9 +13,36 @@ datasource db {
     provider = "postgresql"
 }
 
-model Test {
-    id        String   @id @default(uuid())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+enum UserRole {
+    APPLICANT
+    RECRUITER
+}
+
+model User {
+    id            String         @id @default(uuid())
+    name          String
+    email         String         @unique
+    password      String?
+    role          UserRole
+    headline      String?
+    location      String?
+    about         String?        @db.Text
+    verifiedAt    DateTime?
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+    oauthAccounts OauthAccount[]
+
+    @@map("users")
+}
+
+model OauthAccount {
+    id         String @id @default(uuid())
+    provider   String
+    providerId String
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
+
+    @@unique([provider, providerId])
+    @@map("oauth_accounts")
 }
