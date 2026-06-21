@@ -3,20 +3,12 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-const getDatabaseUrl = () => {
-  let url = process.env["DATABASE_URL"] || "";
-  if (url.includes("${")) {
-    url = url.replace(/\${(\w+)}/g, (_, name) => process.env[name] || "");
-  }
-  return url;
-};
-
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
   datasource: {
-    url: getDatabaseUrl(),
+    url: process.env["DATABASE_URL"],
   },
 });

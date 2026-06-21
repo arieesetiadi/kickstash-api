@@ -10,10 +10,11 @@ services:
       - .env
     environment:
       NODE_ENV: development
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_URL: ${REDIS_URL}
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/app?schema=public
+      REDIS_URL: redis://redis:6379
       CHOKIDAR_USEPOLLING: "true"
       WATCHPACK_POLLING: "true"
+    command: sh -c "npm i && npx prisma generate && npm run start:dev"
     volumes:
       - .:/app
       - /app/node_modules
@@ -28,7 +29,7 @@ services:
     image: postgres:16-alpine
     container_name: hirepath_postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     env_file:
       - .env
     environment:

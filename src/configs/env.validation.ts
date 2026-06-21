@@ -50,6 +50,10 @@ export class EnvironmentVariables {
   @IsNotEmpty()
   GOOGLE_CLIENT_SECRET: string;
 
+  @IsString()
+  @IsNotEmpty()
+  JWT_SECRET: string;
+
   @IsUrl({ require_tld: false })
   @IsNotEmpty()
   FRONTEND_BASE_URL: string;
