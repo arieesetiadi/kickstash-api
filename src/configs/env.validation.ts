@@ -8,6 +8,7 @@ import {
   validateSync,
 } from "class-validator";
 import { plainToInstance, Transform } from "class-transformer";
+import { TokenLifetime } from "@/common/enums";
 
 enum NodeEnvironment {
   Local = "local",
@@ -53,6 +54,20 @@ export class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   JWT_SECRET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsEnum(TokenLifetime)
+  JWT_EXPIRES_IN: string;
+
+  @IsString()
+  @IsNotEmpty()
+  JWT_REFRESH_SECRET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsEnum(TokenLifetime)
+  JWT_REFRESH_EXPIRES_IN: string;
 
   @IsUrl({ require_tld: false })
   @IsNotEmpty()
