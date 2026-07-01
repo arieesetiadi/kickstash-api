@@ -18,22 +18,15 @@ export class RegisterDto {
   email: string;
 
   @IsString()
+  @IsNotEmpty()
+  phone: string;
+
+  @IsString()
   @IsOptional()
-  password: string;
+  password?: string;
 
   @IsString()
   @IsEnum(UserRole)
   role: string;
 
-  @IsString()
-  @IsOptional()
-  headline: string;
-
-  @IsString()
-  @IsOptional()
-  location: string;
-
-  @IsString()
-  @IsOptional()
-  about: string;
 }

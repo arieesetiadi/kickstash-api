@@ -29,18 +29,23 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     const userExists = await this.prisma.user.findFirst({
-      where: { email: registerDto.email },
-      select: { id: true },
+      where: {
+        OR: [{ email: registerDto.email }, { phone: registerDto.phone }],
+      },
+      select: { email: true, phone: true },
     });
 
     if (userExists) {
-      throw new ConflictException("Email already exists");
+      if (userExists.email === registerDto.email) {
+        throw new ConflictException("Email already exists");
+      }
+      throw new ConflictException("Phone number already exists");
     }
 
-    const hashedPassword = await bcrypt.hash(
-      registerDto.password,
-      this.SALT_ROUND,
-    );
+    let hashedPassword: string | null = null;
+    if (registerDto.password) {
+      hashedPassword = await bcrypt.hash(registerDto.password, this.SALT_ROUND);
+    }
 
     const user = await this.userService.create({
       ...registerDto,
@@ -153,11 +158,11 @@ export class AuthService {
     const user = await this.prisma.user.findFirst({
       where: { email },
     });
-    if (!user) {
+    if (!user || !user.password) {
       return null;
     }
 
-    const isPasswordMatch = await bcrypt.compare(password, user.password!);
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       return null;
     }

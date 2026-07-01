@@ -14,20 +14,17 @@ datasource db {
 }
 
 enum UserRole {
-    APPLICANT
-    RECRUITER
+    CUSTOMER
+    ADMIN
 }
 
 model User {
     id            String         @id @default(uuid())
     name          String
     email         String         @unique
+    phone         String         @unique
     password      String?
     role          UserRole
-    headline      String?
-    location      String?
-    about         String?        @db.Text
-    verifiedAt    DateTime?      @map("verified_at")
     createdAt     DateTime       @default(now()) @map("created_at")
     updatedAt     DateTime       @updatedAt @map("updated_at")
     oauthAccounts OauthAccount[]
