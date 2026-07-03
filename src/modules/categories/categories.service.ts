@@ -1,11 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateCategoryDto } from './admin/dto/create-category.dto';
-import { UpdateCategoryDto } from './admin/dto/update-category.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateCategoryDto } from "./admin/dto/create-category.dto";
+import { UpdateCategoryDto } from "./admin/dto/update-category.dto";
 
 @Injectable()
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
+
   async create(createCategoryDto: CreateCategoryDto) {
     return this.prisma.category.create({
       data: createCategoryDto,
@@ -17,7 +18,6 @@ export class CategoriesService {
   }
 
   async findPublic() {
-    // Implement public-specific filtering here (e.g. only active categories)
     return this.prisma.category.findMany();
   }
 
@@ -36,7 +36,7 @@ export class CategoriesService {
       where: { slug },
     });
     if (!category) {
-      throw new NotFoundException(`Category with slug ${slug} not found`);
+      throw new NotFoundException(`Category "${slug}" not found`);
     }
     return category;
   }

@@ -6,15 +6,22 @@ import {
   UnauthorizedException,
   Get,
   UseGuards,
-  Req,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { type Request } from "express";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dtos/register.dto";
 import { LoginDto } from "./dtos/login.dto";
+import { RefreshTokenDto } from "./dtos/refresh-token.dto";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { EnvironmentVariables } from "@/configs/env.validation";
+import { CurrentUser } from "@/common/decorators/current-user.decorator";
+import { Cookies } from "@/common/decorators/cookies.decorator";
+
+type JwtPayload = {
+  userId: string;
+  email: string;
+  role: string;
+};
 
 @Controller("auth")
 export class AuthController {
@@ -47,15 +54,21 @@ export class AuthController {
   }
 
   @Post("refresh")
-  async refresh(@Req() req: Request, @Body() body: any) {
-    const refreshToken = req.cookies?.refresh_token ?? body.refresh_token;
+  async refresh(
+    @Cookies("refresh_token") cookieRefreshToken: string,
+    @Body() body: RefreshTokenDto,
+  ) {
+    const refreshToken = cookieRefreshToken ?? body.refresh_token;
     return this.authService.refresh(refreshToken);
   }
 
   @Post("logout")
   @HttpCode(200)
-  async logout(@Req() req: Request, @Body() body: any) {
-    const refreshToken = req.cookies?.refresh_token ?? body.refresh_token;
+  async logout(
+    @Cookies("refresh_token") cookieRefreshToken: string,
+    @Body() body: RefreshTokenDto,
+  ) {
+    const refreshToken = cookieRefreshToken ?? body.refresh_token;
     if (refreshToken) {
       await this.authService.logout(refreshToken);
     }
@@ -65,8 +78,8 @@ export class AuthController {
 
   @Get("protected")
   @UseGuards(JwtAuthGuard)
-  async protected(@Req() req: Request) {
-    return req.user;
+  async protected(@CurrentUser() user: JwtPayload) {
+    return user;
   }
 
   @Get("public")
